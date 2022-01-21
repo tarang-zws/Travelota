@@ -11,7 +11,7 @@
 
 <script>
 
-import customers from './assets/customers';
+import customers from './assets/Destination';
 import Autocomplete from './components/Autocomplete'
 import HotelList from './components/HotelList.vue'
 
