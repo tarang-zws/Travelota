@@ -1,26 +1,10 @@
-## Vue.JS 2 Autocomplete Component
+Step 1 :- git clone https://github.com/tarang-zws/Travelota.git
 
-[Youtube Tutorial link](https://youtu.be/cuo9T6rc-VE)
+Step 2 :- cd Travelota
 
-#### [@WeCodeTutorials](https://twitter.com/WeCodeTutorials)
-[![Logo](https://cdn.pbrd.co/images/HdwCut8.png)](https://www.youtube.com/channel/UCj9VatwdukZjNOnIKcpWcsA)
+Step 3 :- npm install
 
-This project is made for my youtube tutorial on "Create a Vue.JS 2 Autocomplete Component".
+Step 4 :- run project
 
-![Autocomplete Component Example](https://media.giphy.com/media/33Iuj8rH9qCk2uoval/giphy.gif)
+/* Description about the task */
 
-## get it up and running.
-
-``` bash
-# go into the project
-cd VueJS-Autocomplete
-
-# install dependencies
-npm install
-
-# serve with hot reload at localhost:8080
-npm run dev
-
-```
-
-Good Luck :)
