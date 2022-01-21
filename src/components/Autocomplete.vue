@@ -92,11 +92,11 @@
                     </datepicker>
                     <div v-if="submitted && !$v.enddate.required" style="color:red">Check-out date is required</div>
                 </div>
-                <div class="col-sm-1 form-group">
+                <div class="col-6 col-sm-1 form-group">
                     <label>Adult</label>
                     <input type="number" placeholder="" v-model="adults" id="adults" @click="selectAdults" class="form-control" min="1"/>
                 </div>
-                <div class="col-sm-1 form-group">
+                <div class="col-6 col-sm-1 form-group">
                     <label>Children</label>
                     <input type="number" v-model="childrens" placeholder="" id="childrens" @click="selectChildren" class="form-control" :class="{ 'is-invalid': submitted && $v.childrens.$error }" min="0"/>
                     <div v-if="submitted && !$v.childrens.required" class="invalid-feedback">Check In is required</div> 
