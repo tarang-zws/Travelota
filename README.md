@@ -24,6 +24,8 @@ Select the destination , Check-in date , Chech-out date , Adults or Childrens
 
 -> After select all the data it will redirect to hotel list page and it will show all the hotel list but as per your requirements on one scroll only 10 record will be load 
 
+-> Hotel List data comes from the src/json/hotellist.json file.
+
 -> You can also use Search filter and Rating filter.
 
 -> In the rating we are use Star-rating built in functionality and star rating is also support decimal rating like 3.5
