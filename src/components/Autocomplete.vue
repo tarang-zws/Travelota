@@ -37,7 +37,7 @@
                 <div class="col-sm-3 form-group">
                   <label>Destination</label><span class="text-danger">*</span>
                   <div class="autocomplete">
-                  <div class="form-control" id="divCountry" @click="toggleVisible" v-text="selectedItem ? selectedItem[filterby] : ''"></div>
+                  <input type="text" class="form-control form-control-readonly" :value="mapCity" id="divCountry" @click="toggleVisible" v-text="selectedItem ? selectedItem[filterby] : ''" readonly/>
                   <div class="placeholder" v-if="selectedItem == null" v-text="title"></div>
                   <button class="close" @click="selectedItem = null" v-if="selectedItem">x</button>
                   <div class="popover" v-show="visible">
@@ -47,23 +47,24 @@
                       @keydown.up="up"
                       @keydown.down="down"
                       @keydown.enter="selectItem"
-                      :class="{ 'is-invalid': submitted && $v.selectedItem.$error }"
-                       id="txtCountry"/>
+                      :class="{ 'is-invalid': submitted && $v.mapCity.$error }"
+                       id="txtCountry"
+                      />
                       
                     <div class="options" ref="optionsList">
                       <ul >
                         <li v-for="(match, index) in matches"
                           :key="index"
                           :class="{ 'selected': (selected == index)}"
-                          @click="itemClicked(index)"
+                          @click="itemClicked(match)"
                           v-text="match[filterby]"></li>
-                      </ul>
+                      </ul>  
                     </div>
 
                   </div>
                   </div>
-                      <div v-if="submitted && !$v.selectedItem.required" style="color:red">Destination is required</div>
-                </div>
+                    <div v-if="submitted && !$v.mapCity.required" style="color:red">Destination is required</div>
+                  </div>
                 <div class="col-sm-3 form-group">
                     <label>Check-in</label><span class="text-danger">*</span>
                     <datepicker
@@ -94,11 +95,13 @@
                 </div>
                 <div class="col-6 col-sm-1 form-group">
                     <label>Adult</label>
-                    <input type="number" placeholder="" v-model="adults" id="adults" @click="selectAdults" class="form-control" min="1"/>
+                    <input type="number" @input="changed" placeholder="" :value="mapAdult" id="adults" @click="selectAdults" class="form-control" min="1" />
+                    <!-- <p>New value {{mapAdult}}</p> -->
                 </div>
                 <div class="col-6 col-sm-1 form-group">
                     <label>Children</label>
-                    <input type="number" v-model="childrens" placeholder="" id="childrens" @click="selectChildren" class="form-control" :class="{ 'is-invalid': submitted && $v.childrens.$error }" min="0"/>
+                    <input type="number" @input="changedChildren" :value="mapChildren" placeholder="" id="childrens" @click="selectChildren" class="form-control" :class="{ 'is-invalid': submitted && $v.childrens.$error }" min="0"/>
+                     <!-- <p>New value {{msg1}}</p> -->
                     <div v-if="submitted && !$v.childrens.required" class="invalid-feedback">Check In is required</div> 
                 </div>
                 <!-- <div class="col-sm-1 form-group">
@@ -129,7 +132,7 @@
 <script>
 import Datepicker from "vuejs-datepicker";
 import { required, email, minLength, sameAs } from "vuelidate/lib/validators";
-
+import { mapState } from "vuex";
 
   export default {
     props: {
@@ -147,7 +150,8 @@ import { required, email, minLength, sameAs } from "vuelidate/lib/validators";
       shouldReset: {
         type: Boolean,
         default: true
-      }
+      },
+      
     },
     data() {
       return {
@@ -156,49 +160,41 @@ import { required, email, minLength, sameAs } from "vuelidate/lib/validators";
         selected: 0,
         query: '',
         visible: false,
-        childrens:0,
-        adults:2,
         startdate:'',
         enddate:'',
         errors:[],
         DisabledDates: {
         to: new Date(Date.now() - 8640000),
         },
-        // datevalidation:{
-        // to: new Date(new Date(document.getElementById('checkin_date').getAttribute('open-date'))-8640000)
-        // },
         submitted: false
       };
       
     },
-    mounted(){
-      
-      if(localStorage.getItem("selected")!= 'undefined')
-      {
-        var jsonData = JSON.parse(localStorage.getItem("selected"));
-        document.getElementById('divCountry').innerHTML = jsonData.name;
-        if(localStorage.getItem("children") != 'undefined' || localStorage.getItem("children") != '' )
-      {
-        $('#childrens').val(localStorage.getItem("children"));
-      }
-      if(localStorage.getItem("Adults") != 'undefined' || localStorage.getItem("Adults") != '' )
-      {
-        $('#adults').val(localStorage.getItem("Adults"));
-      }      
-      }  
-    },
+
      validations: {
        startdate: { required },
        childrens: {required},
-       selectedItem: { required},
+       mapCity: { required},
        enddate: { required },
     },
             
             
     methods: {
+      changedCity: function(event) {
+        debugger;
+        // this.$store.commit('changedCity', event.target.value)
+        alert(event.target.value);
+        console.log("here in changed city");
+      },
+      changed: function(event) {
+        this.$store.commit('changed', event.target.value)
+      },
+      changedChildren(event){
+        
+        this.$store.commit('changedChildren', event.target.value)
+      },
       handleSubmit(e) {
           console.log("here in submit button");
-          
           this.submitted = true;
 
           // stop here if form is invalid
@@ -218,10 +214,12 @@ import { required, email, minLength, sameAs } from "vuelidate/lib/validators";
         this.$router.push('/hotel_search')
       },
       selectChildren(){
-        localStorage.setItem('children',this.childrens);
+        // localStorage.setItem('children',this.childrens);
       },
       selectAdults(){
         localStorage.setItem('Adults',this.adults);
+        // this.$store.state.adults;
+        // return $store.getters.flavor
       },
       seelectCheckindate(){
         localStorage.setItem('checkin_date',this.startdate);
@@ -235,7 +233,8 @@ import { required, email, minLength, sameAs } from "vuelidate/lib/validators";
         }, 50);
       },
       itemClicked(index) {
-        this.selected = index;
+        this.$store.commit('changedCity', index.name)
+        this.selected = index.id;
         this.selectItem();
       },
       selectItem() {
@@ -251,8 +250,8 @@ import { required, email, minLength, sameAs } from "vuelidate/lib/validators";
           this.selected = 0;
         }
         
-        this.$emit('selected', JSON.parse(JSON.stringify(this.selectedItem)));
-        localStorage.setItem('selected',JSON.stringify(this.selectedItem));
+        // this.$emit('selected', JSON.parse(JSON.stringify(this.selectedItem)));
+        // localStorage.setItem('selected',JSON.stringify(this.selectedItem));
       },
       up() {
         if (this.selected == 0) {
@@ -281,6 +280,28 @@ import { required, email, minLength, sameAs } from "vuelidate/lib/validators";
         },
     },
     computed: {
+      // adults:{
+      //   get(){
+      //     return this.$store.state.adults;
+      //   },
+      //   set(value){
+      //       this.$store.commit('update value',value)
+      //   }
+      // },
+      ...mapState({
+      mapCity: state => state.selectedItem,
+      mapAdult: state => state.adults,
+      mapChildren: state => state.childrens,
+      }),
+      city(){
+        return this.$store.getters.city;
+      },
+      flavor(){
+        return this.$store.getters.flavor;
+      },
+      childrens(){
+        return this.$store.getters.childrens;
+      },
       matches() {
         this.$emit('change', this.query);
 

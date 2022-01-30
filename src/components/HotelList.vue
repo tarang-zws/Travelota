@@ -54,7 +54,7 @@
                     <h4 class="mb-4">Filter</h4>
                     <div class="widget mb-3">
                       <div class="row">
-                        <div class="search-wrapper panel-heading col-sm-12">
+                        <div class="search-wrapper panel-heading col-sm-12" >
                             <input class="form-control" type="text" v-model="searchQuery" placeholder="Search" />
                         </div>
                       </div>
@@ -74,8 +74,8 @@
                 </div>
                 <div class="col-md-9">
                   <h6 v-if="!resultQuery.length">No results Founds</h6>
-                  <span>{{resultQuery.length}} <b>Hotel Founds</b></span>
-                  <div class="card mb-3" v-for="hotel in resultQuery" :key="hotel.id">
+                  <span><b>{{resultQuery.length}} Hotel Founds</b></span>
+                  <div class="card mb-3" v-for="hotel in resultQuery" :key="hotel.id" >
                     <div class="card-body">
                       <div class="row">
                         <div class="col-md-3" >
@@ -108,6 +108,8 @@
 <script>
 import StarRating from 'vue-star-rating'
 import resources from '../json/hotellist.json'
+import { mapState } from "vuex";
+
 export default {
   name: "App",
   name: 'HotelList',
@@ -132,8 +134,8 @@ export default {
   mounted() {
   let context = this;
   context.datalimit();
-  if(window.localStorage.getItem("rating") != 'undefined')
-    context.filterbyrating(window.localStorage.getItem("rating"), true);
+  if(this.$store.getters.rating != 'undefined') 
+    context.filterbyrating(this.$store.getters.rating, true);
   $(window).on('scroll', function() {
           if ($(window).scrollTop() >= $(
             '.tarang').offset().top + $('.tarang').
@@ -146,7 +148,12 @@ export default {
     resultQuery() {
       return this.tempArray.filter(hotel=>(hotel.name.startsWith(this.searchQuery?this.searchQuery : "")) && (this.ratingFilter === -1 || hotel.hotel_rating === this.ratingFilter))
     },
-    
+    ...mapState({
+      mapFilter: state => state.rating,
+      }),
+      rating(){
+        return this.$store.getters.rating;
+    },  
   },
   watch:{
     resources:function(){
@@ -158,22 +165,28 @@ export default {
   },
   methods:{
     filterbyrating(rating,isNotAddRating){
-      debugger;
+      
       if (rating && this.ratingFilter != Number(rating)) {
         if(!isNotAddRating)
-          window.localStorage.setItem("rating", rating);
+        console.log("here in rating filter");
+        this.$store.commit('resultFilter',rating)
         this.ratingFilter = Number(rating);
         this.$router.push({name:'HotelList',params:{rating:rating}})
         
         
       }else{
         this.ratingFilter = -1;
-        window.localStorage.setItem("rating", 'undefined');
+        // window.localStorage.setItem("rating", 'undefined');
         this.$router.push({name:'HotelList'})
       }
       console.log("after if else rating",this.ratingFilter)
     },
-
+    resultFilter: function(event) {
+     
+      console.log("here");
+      alert(event.target.value)
+      this.$store.commit('resultFilter', event.target.value)
+    },
     
     addMessage: function(){
       let id = this.resources.length + 1;

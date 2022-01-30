@@ -7,7 +7,7 @@ import App from './App'
 import router from '../src/router'
 import Vuelidate from 'vuelidate';
 import resources from '../src/json/hotellist.json';
-
+import { store } from './store/store.js'
 Vue.config.productionTip = false
 Vue.use(Vuelidate);
 
@@ -18,6 +18,7 @@ Vue.use(Vuelidate);
 new Vue({
   el: '#app',
   router,
+  store,
   resources,
   components: { App },
   template: '<router-view/>',
